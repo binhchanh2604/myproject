@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background: #000000;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #Particles:after {
+            content: "";
+            position: absolute;
+            top: -2000px;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            border-radius: 100%;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Resize the canvas to fill the window
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Array to store mouse positions
+    const mousePositions = [];
+
+    // Listen for mousemove events
+    window.addEventListener('mousemove', function(event) {
+        // Add multiple lines at the current mouse position to the array
+        for (let i = 0; i < 10; i++) {
+            mousePositions.push({
+                x: event.clientX,
+                y: event.clientY,
+                color: 'hsl(' + (Math.random() * 360) + ', 100%, 50%)',
+                dx: Math.random() - 0.5,
+                dy: Math.random() - 0.5
+            });
+        }
+
+        // Only keep the last 1000 positions
+        while (mousePositions.length > 1000) {
+            mousePositions.shift();
+        }
+
+        // Redraw everything
+        draw();
+    });
+
+    function draw() {
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw a line through all mouse positions
+        for (let i = 0; i < mousePositions.length - 1; i++) {
+            const p = mousePositions[i];
+
+            p.x += p.dx;
+            p.y += p.dy;
+
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + p.dx, p.y + p.dy);
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = (i / mousePositions.length) * 10 + 1;
+            ctx.stroke();
+        }
+    }
+</script>
+
+</body>
+</html>
